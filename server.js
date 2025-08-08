@@ -4,8 +4,25 @@ const express = require("express");
 const cors = require("cors");
 const fetch = require("node-fetch"); // npm install node-fetch@2
 
+const allowedOrigins = [
+  "http://localhost:8000",
+  "http://127.0.0.1:8000",
+  "http://0.0.0.0:8000",
+];
+
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (like curl/postman) or whitelisted origins
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+  }),
+);
 app.use(express.json());
 
 app.post("/connect-pipecat", async (req, res) => {
