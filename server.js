@@ -8,12 +8,15 @@ const allowedOrigins = [
   "http://localhost:8000",
   "http://127.0.0.1:8000",
   "http://0.0.0.0:8000",
+  "http://localhost:3000",
 ];
 
 const app = express();
 app.use(
   cors({
     origin: function (origin, callback) {
+      console.log("Origin:", origin);
+      console.log("Allowed Origins:", allowedOrigins);
       // allow requests with no origin (like curl/postman) or whitelisted origins
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
@@ -27,11 +30,12 @@ app.use(express.json());
 
 app.post("/connect-pipecat", async (req, res) => {
   try {
-    const { MY_CUSTOM_DATA } = req.body;
+    const { config } = req.body;
 
     console.log(
       `Fetching https://api.pipecat.daily.co/v1/public/${process.env.AGENT_NAME}/start`,
     );
+    console.log("config", config);
 
     const response = await fetch(
       `https://api.pipecat.daily.co/v1/public/${process.env.AGENT_NAME}/start`,
@@ -45,9 +49,15 @@ app.post("/connect-pipecat", async (req, res) => {
           // Create Daily room
           createDailyRoom: true,
           // Optionally set Daily room properties
-          dailyRoomProperties: { start_video_off: true },
+          dailyRoomProperties: {
+            start_video_off: true,
+            geo: "ap-south-1",
+            exp: +new Date() / 1000 + 600, // time in minutes now + 10 minutes
+            max_participants: 2,
+          },
           // Optionally pass custom data to the bot
-          body: { MY_CUSTOM_DATA },
+          body: { config },
+          // body: JSON.stringify(updatedBotConfig),
         }),
       },
     );
