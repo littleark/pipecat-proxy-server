@@ -52,8 +52,9 @@ app.post("/connect-pipecat", async (req, res) => {
           dailyRoomProperties: {
             start_video_off: true,
             geo: "ap-south-1",
-            exp: +new Date() / 1000 + 600, // time in minutes now + 10 minutes
+            exp: +new Date() / 1000 + 610, // time in minutes now + 10 minutes + 10 seconds
             max_participants: 2,
+            eject_at_room_exp: true,
           },
           // Optionally pass custom data to the bot
           body: { config },
