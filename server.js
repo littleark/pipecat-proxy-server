@@ -35,8 +35,21 @@ app.post("/connect-pipecat", async (req, res) => {
     console.log(
       `Fetching https://api.pipecat.daily.co/v1/public/${process.env.AGENT_NAME}/start`,
     );
-    console.log("config", config);
-
+    const botData = {
+      greeting: config.greeting,
+      transportType: "daily",
+      metadata: config.metadata,
+    };
+    console.log("botData", botData);
+    const body = {
+      student: botData.metadata.studentName,
+      chapter: botData.metadata.chapter,
+      book: botData.metadata.book.title,
+      prompt: botData.metadata.character.prompt,
+      section_type: botData.metadata.book.section_type,
+      character_name: botData.metadata.character.name,
+    };
+    console.log("body", body);
     const response = await fetch(
       `https://api.pipecat.daily.co/v1/public/${process.env.AGENT_NAME}/start`,
       {
@@ -48,6 +61,7 @@ app.post("/connect-pipecat", async (req, res) => {
         body: JSON.stringify({
           // Create Daily room
           createDailyRoom: true,
+          privacy: "private",
           // Optionally set Daily room properties
           dailyRoomProperties: {
             start_video_off: true,
@@ -57,7 +71,7 @@ app.post("/connect-pipecat", async (req, res) => {
             eject_at_room_exp: true,
           },
           // Optionally pass custom data to the bot
-          body: { config },
+          body,
           // body: JSON.stringify(updatedBotConfig),
         }),
       },

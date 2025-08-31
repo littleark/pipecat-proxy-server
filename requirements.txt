@@ -1,0 +1,5 @@
+supabase
+openai
+google-genai
+loguru
+python-dotenv~=1.0.1
